@@ -321,7 +321,7 @@ func (d Device) Pull(remotePath string, dest io.Writer) (err error) {
 	return
 }
 
-func (d Device) Logcat(dst io.Writer, exitChan chan bool) error {
+func (d Device) Logcat(dst io.Writer, exitChan chan bool, params ...string) error {
 	var tp transport
 	var err error
 	if tp, err = d.createDeviceTransport(); err != nil {
@@ -329,7 +329,7 @@ func (d Device) Logcat(dst io.Writer, exitChan chan bool) error {
 	}
 	defer func() { _ = tp.Close() }()
 
-	if err = tp.Send("shell:logcat"); err != nil {
+	if err = tp.Send("shell:logcat " + strings.Join(params, " ")); err != nil {
 		return err
 	}
 	if err = tp.VerifyResponse(); err != nil {
